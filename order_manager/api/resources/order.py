@@ -1,11 +1,16 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_identity
+)
 
 from order_manager.models import (
     Users,
     Orders
 )
+
 from order_manager.schemas import OrdersSchema
 from order_manager.extensions import db
 from order_manager.helpers.paginator import paginate
