@@ -42,15 +42,11 @@ class CartSchema(ma.Schema):
     items = ma.List(ma.Nested(CartItemSchema))
     current_total = ma.Float()
 
+# Only to Serialize order
 class OrderSchema(ma.Schema):
     _id = ObjectId(dump_only=True)
     ordered_by = ma.Nested(UserSchema, dump_only=True)
-    items = ma.List(ma.Nested(CartItemSchema))
-    total = ma.Float()
-    ordered_on = ma.DateTime()
-
-    @post_load
-    def make_order(self, data):
-        print(data)
-        return Orders(**data)
-
+    items = ma.List(ma.Nested(CartItemSchema), dump_only=True)
+    status = ma.String(dump_only=True)
+    total = ma.Float(dump_only=True)
+    ordered_on = ma.DateTime(dump_only=True)

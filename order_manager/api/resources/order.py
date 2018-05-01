@@ -40,24 +40,21 @@ class OrdersResource(Resource):
         return schema.jsonify(order)
 
     def post(self):
+        schema = OrderSchema()
+        user_id = get_jwt_identity()
 
-        schema = OrderSchema(partial=True)
+        user = Users.objects.get(id=user_id)
+        final_cart = user.cart
 
-        if not request.is_json:
-            return jsonify({'msg': 'Missing JSON in request'}), 400
-
-        order, errors = schema.load(request.json)
-        if errors:
-            return errors, 422
-
-        try:
-            print(order)
-            # order.save()
-        except NotUniqueError:
+        if not final_cart.items:
             return make_response(
-                jsonify({'msg': 'An order in that ID exists!'}),
-                422
+                jsonify(msg='Cart is empty, please add items to cart to order'), 422
             )
+
+        order = Orders(ordered_by=user, items=final_cart.items,
+                       total=final_cart.current_total)
+        order.save()
+        final_cart.update(current_total=0.0, items=[])
         return schema.jsonify(order)
 
 
@@ -74,19 +71,9 @@ class CropsResource(Resource):
     def post(self):
 
         schema = CropSchema(partial=True)
-        user_id = get_jwt_identity()
 
         if not request.is_json:
-            return make_response(
-                jsonify(msg='Missing JSON in request'), 400
-            )
-
-        if user_id == uid:
-            user = Users.objects.get(id=user_id)
-            try:
-                cart = user.cart
-            except DoesNotExist:
-                return jsonify({'msg':'Cart is empty, please add items to cart to order'}), 422
+            return jsonify({'msg': 'Missing JSON in request'}), 400
 
         crop, errors = schema.load(request.json)
         if errors:
@@ -108,9 +95,7 @@ class CartResource(Resource):
     def patch(self, uid):
 
         if not request.is_json:
-            return make_response(
-                jsonify(msg='Missing JSON in request'), 400
-            )
+            return jsonify({'msg': 'Missing JSON in request'}), 400
 
         schema = CartSchema()
         user_id = get_jwt_identity()

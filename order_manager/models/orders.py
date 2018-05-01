@@ -20,11 +20,12 @@ class Orders(db.Document):
     ordered_by = db.ReferenceField(Users)
     items = db.ListField()
     total = db.FloatField(default=0)
+    status= db.StringField(default='Placed')
     ordered_on = db.DateTimeField(
         default=datetime.utcnow() + timedelta(hours=5, minutes=30))
 
     meta = {
-        'indexes': ['ordered_on']
+        'indexes': ['ordered_on','ordered_by']
     }
 
     def __init__(self, **kwargs):
