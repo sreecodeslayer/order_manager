@@ -2,7 +2,11 @@ from order_manager.extensions import db, pwd_context
 from datetime import datetime, timedelta
 
 from .users import Users
-from .crops import Crops
+
+class Crops(db.Document):
+    '''Mongodb Model for Crops'''
+    name = db.StringField()
+    price = db.FloatField()    
 
 
 class Orders(db.Document):
