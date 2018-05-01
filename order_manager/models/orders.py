@@ -8,6 +8,8 @@ class Crops(db.Document):
     name = db.StringField()
     price = db.FloatField()    
 
+    def __init__(self, **kwargs):
+        super(Crops, self).__init__(**kwargs)
 
 class Orders(db.Document):
     '''Mongodb Model for Orders'''
