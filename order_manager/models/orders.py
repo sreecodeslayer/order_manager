@@ -5,9 +5,13 @@ from .users import Users
 
 class Crops(db.Document):
     '''Mongodb Model for Crops'''
-    name = db.StringField()
+    name = db.StringField(unique=True)
     price = db.FloatField()    
 
+    meta = {
+        'indexes': ['name']
+    }
+    
     def __init__(self, **kwargs):
         super(Crops, self).__init__(**kwargs)
 

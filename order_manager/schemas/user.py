@@ -25,5 +25,6 @@ class UserSchema(ma.Schema):
 
     @post_load
     def make_user(self, data):
+        print(data)
         return Users(**data)
 

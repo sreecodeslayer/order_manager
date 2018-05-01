@@ -18,7 +18,7 @@ class ObjectId(fields.Field):
             return ''
         return str(value)
 
-class CropsSchema(ma.Schema):
+class CropSchema(ma.Schema):
     _id = ObjectId(dump_only=True)
     name = ma.String()
     price = ma.Float()
@@ -27,10 +27,10 @@ class CropsSchema(ma.Schema):
     def make_crop(self, data):
         return Crops(**data)
 
-class OrdersSchema(ma.Schema):
+class OrderSchema(ma.Schema):
     _id = ObjectId(dump_only=True)
     ordered_by = ma.Nested(UserSchema, dump_only=True)
-    items = ma.List(CropSchema)
+    items = ma.List(ma.Nested(CropSchema))
     total = ma.Float()
     ordered_on = ma.DateTime()
 

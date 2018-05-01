@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify, make_response
 from flask_restful import Resource
 
 from flask_jwt_extended import (
@@ -8,10 +8,16 @@ from flask_jwt_extended import (
 
 from order_manager.models import (
     Users,
-    Orders
+    Orders,
+    Crops
 )
 
-from order_manager.schemas import OrdersSchema
+from order_manager.schemas import (
+    OrderSchema,
+    CropSchema
+)
+
+
 from order_manager.extensions import db
 from order_manager.helpers.paginator import paginate
 
@@ -41,5 +47,38 @@ class OrdersResource(Resource):
         try:
             order.save()
         except NotUniqueError:
-            return jsonify({'msg': 'An order in that ID exists!'}), 422
+            return make_response(
+                jsonify({'msg': 'An order in that ID exists!'}),
+                422
+            )
         return schema.jsonify(order)
+
+class CropsResource(Resource):
+
+    decorators = [jwt_required]
+
+    def get(self, cid):
+        schema = CropsSchema()
+
+        crop = Crops.objects.get_or_404(id=oid)
+        return schema.jsonify(crop)
+
+    def post(self):
+
+        schema = CropSchema(partial=True)
+
+        if not request.is_json:
+            return jsonify({'msg': 'Missing JSON in request'}), 400
+
+        crop, errors = schema.load(request.json)
+        if errors:
+            return errors, 422
+
+        try:
+            crop.save()
+        except NotUniqueError:
+            return make_response(
+                jsonify({'msg': 'A crop in that name exists!'}),
+                422
+            )
+        return schema.jsonify(crop)

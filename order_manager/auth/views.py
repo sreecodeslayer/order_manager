@@ -22,12 +22,18 @@ def login():
     if not request.is_json:
         return jsonify({'msg': 'Missing JSON in request'}), 400
 
-    username = request.json.get('username')
+    schema = UserSchema(partial=True)
+    user, errors = schema.load(request.json)
+    if errors:
+        return jsonify(errors), 422
+    
+    email = request.json.get('email')
     password = request.json.get('password')
-    if not username or not password:
-        return jsonify({'msg': 'Missing username or password'}), 400
 
-    user = Users.objects.get_or_404(username=username)
+    if not email or not password:
+        return jsonify({'msg': 'Missing email or password'}), 400
+
+    user = Users.objects.get_or_404(email=email)
     if not pwd_context.verify(password, user.passwd_digest):
         return jsonify({'msg': 'User creds invalid'}), 400
 
@@ -73,4 +79,4 @@ def refresh():
 
 @jwt.user_loader_callback_loader
 def user_loader_callback(identity):
-    return User.objects.get(id=identity)
+    return Users.objects.get(id=identity)
