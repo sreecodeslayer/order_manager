@@ -18,7 +18,7 @@ class Crops(db.Document):
 class Orders(db.Document):
     '''Mongodb Model for Orders'''
     ordered_by = db.ReferenceField(Users)
-    items = db.ListField(db.ReferenceField(Crops))
+    items = db.ListField()
     total = db.FloatField(default=0)
     ordered_on = db.DateTimeField(
         default=datetime.utcnow() + timedelta(hours=5, minutes=30))

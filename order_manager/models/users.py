@@ -1,6 +1,10 @@
 from order_manager.extensions import db, pwd_context
 from datetime import datetime, timedelta
 
+class Carts(db.Document):
+    '''Mongodb Model for Carts per user'''
+    current_total = db.FloatField(default=0.0)
+    items = db.ListField()
 
 class Users(db.Document):
     '''Mongodb Model for Users'''
@@ -8,6 +12,7 @@ class Users(db.Document):
     email = db.EmailField(unique=True)
     passwd_digest = db.StringField()
     phone = db.StringField()
+    cart = db.ReferenceField(Carts)
 
     meta = {
         'indexes': ['username', 'email']

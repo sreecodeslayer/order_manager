@@ -5,5 +5,6 @@ from .user import (
 
 from .order import (
     OrdersResource,
-    CropsResource
+    CropsResource,
+    CartResource
 )

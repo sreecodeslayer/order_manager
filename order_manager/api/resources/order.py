@@ -9,33 +9,39 @@ from flask_jwt_extended import (
 from order_manager.models import (
     Users,
     Orders,
-    Crops
+    Crops,
+    Carts
 )
 
 from order_manager.schemas import (
     OrderSchema,
-    CropSchema
+    CropSchema,
+    CartSchema
 )
 
 
 from order_manager.extensions import db
 from order_manager.helpers.paginator import paginate
 
-from mongoengine.errors import NotUniqueError
+from mongoengine.errors import (
+    NotUniqueError,
+    DoesNotExist
+)
+
 
 class OrdersResource(Resource):
 
     decorators = [jwt_required]
 
     def get(self, oid):
-        schema = OrdersSchema()
+        schema = OrderSchema()
 
         order = Orders.objects.get_or_404(id=oid)
         return schema.jsonify(order)
 
     def post(self):
 
-        schema = OrdersSchema(partial=True)
+        schema = OrderSchema(partial=True)
 
         if not request.is_json:
             return jsonify({'msg': 'Missing JSON in request'}), 400
@@ -45,13 +51,15 @@ class OrdersResource(Resource):
             return errors, 422
 
         try:
-            order.save()
+            print(order)
+            # order.save()
         except NotUniqueError:
             return make_response(
                 jsonify({'msg': 'An order in that ID exists!'}),
                 422
             )
         return schema.jsonify(order)
+
 
 class CropsResource(Resource):
 
@@ -66,9 +74,19 @@ class CropsResource(Resource):
     def post(self):
 
         schema = CropSchema(partial=True)
+        user_id = get_jwt_identity()
 
         if not request.is_json:
-            return jsonify({'msg': 'Missing JSON in request'}), 400
+            return make_response(
+                jsonify(msg='Missing JSON in request'), 400
+            )
+
+        if user_id == uid:
+            user = Users.objects.get(id=user_id)
+            try:
+                cart = user.cart
+            except DoesNotExist:
+                return jsonify({'msg':'Cart is empty, please add items to cart to order'}), 422
 
         crop, errors = schema.load(request.json)
         if errors:
@@ -82,3 +100,57 @@ class CropsResource(Resource):
                 422
             )
         return schema.jsonify(crop)
+
+
+class CartResource(Resource):
+    decorators = [jwt_required]
+
+    def patch(self, uid):
+
+        if not request.is_json:
+            return make_response(
+                jsonify(msg='Missing JSON in request'), 400
+            )
+
+        schema = CartSchema()
+        user_id = get_jwt_identity()
+        cart = None
+        if user_id == uid:
+            user = Users.objects.get(id=user_id)
+            try:
+                cart = user.cart
+            except DoesNotExist:
+                cart = Carts(current_total=0.0, items=[])
+                cart.save()
+                user.update(cart=cart)
+                user.reload()
+
+            json_data = request.get_json()
+            cart.reload()
+
+            added_items = json_data.get('items')
+
+            current_cart_items = cart.items
+            current_total = 0
+            # Update card
+            for item in added_items:
+                item_id = item.get('id')
+                qty = item.get('qty', 1)
+                item = Crops.objects.get_or_404(id=item_id)
+                item_price = item.price * qty
+                current_total += item_price
+                for curr in current_cart_items:
+                    if item == curr.get('item'):
+                        cart.update(pull__items=curr)
+                        curr['qty'] = qty
+                        curr['total'] = item_price
+                        cart.update(add_to_set__items=curr)
+                else:
+                    cart.update(add_to_set__items={
+                            'item': item, 'total': item_price, 'qty': qty})
+                    cart.update(current_total=current_total)
+            user.reload()
+
+            cart,errors = schema.dump(user.cart)
+            return cart
+        return make_response(jsonify(msg='User not found'), 404)
