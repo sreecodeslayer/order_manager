@@ -33,11 +33,14 @@ class OrdersResource(Resource):
 
     decorators = [jwt_required]
 
-    def get(self, oid):
+    def get(self):
         schema = OrderSchema()
+        user_id = get_jwt_identity()
 
-        order = Orders.objects.get_or_404(id=oid)
-        return schema.jsonify(order)
+        user = Users.objects.get(id=user_id)
+
+        order = Orders.objects(ordered_by=user)
+        return schema.jsonify(order, many=True)
 
     def post(self):
         schema = OrderSchema()
