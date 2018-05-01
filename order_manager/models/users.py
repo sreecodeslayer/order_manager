@@ -7,6 +7,7 @@ class Users(db.Document):
     username = db.StringField(required=True, unique=True)
     email = db.EmailField(unique=True)
     passwd_digest = db.StringField()
+    phone = db.StringField()
 
     meta = {
         'indexes': ['username', 'email']

@@ -21,6 +21,7 @@ class UserSchema(ma.Schema):
                       validate=validate.Email(
                           error='Not a valid email address'))
     passwd_digest = ma.String(load_only=True, required=True)
+    phone = ma.String()
 
     @post_load
     def make_user(self, data):
