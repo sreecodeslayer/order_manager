@@ -126,6 +126,7 @@ class CartResource(Resource):
 
         schema = CartSchema()
         cart_data, errors = schema.load(request.json)
+        print(cart_data)
         if errors:
             return errors, 422
         user_id = get_jwt_identity()
@@ -133,7 +134,10 @@ class CartResource(Resource):
         user = Users.objects.get(id=user_id)
         try:
             cart = user.cart
-            cart.update(customer = cart_data.get('customer'))
+            if not cart:
+                raise DoesNotExist
+            else:
+                cart.update(customer = cart_data.get('customer'))
         except DoesNotExist:
             cart = Carts(current_total=0.0, items=[],
                          customer=cart_data.get('customer'))
