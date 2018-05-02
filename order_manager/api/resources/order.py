@@ -65,11 +65,11 @@ class CropsResource(Resource):
 
     decorators = [jwt_required]
 
-    def get(self, cid):
-        schema = CropsSchema()
+    def get(self):
+        schema = CropSchema()
 
-        crop = Crops.objects.get_or_404(id=oid)
-        return schema.jsonify(crop)
+        crop = Crops.objects()
+        return schema.jsonify(crop ,many=True)
 
     def post(self):
 
