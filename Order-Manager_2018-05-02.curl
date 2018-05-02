@@ -1,0 +1,27 @@
+curl -X GET -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudGl0eSI6IjVhZTk4MWQ5MTkxODViMzllYmU1YWQwZiIsImlhdCI6MTUyNTI1MzQzNywianRpIjoiMTY0MzI1YmItMWVkNy00MGRlLTllZWItMTg4NjQyNzE5OGFhIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTUyNTI1NDMzNywiZnJlc2giOmZhbHNlLCJuYmYiOjE1MjUyNTM0Mzd9.iPSxTYZ013Bi2vHHWWPovmqWafDMwLu3O0lsdjcF_yw" -d "" http://192.168.10.109:6363/api/v1/orders
+
+curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4N2Q3NmExNi05MThlLTRjMDctYWQ4Ny0wZWVlMGM1NGVkNzciLCJleHAiOjE1MjUyNDYxMjEsImZyZXNoIjpmYWxzZSwiaWF0IjoxNTI1MjQ1MjIxLCJpZGVudGl0eSI6IjVhZTgwNjYxMTkxODViNDMxMWIyNDUzYiIsInR5cGUiOiJhY2Nlc3MiLCJuYmYiOjE1MjUyNDUyMjF9.GTUUzQWJb9AlXkOVLqMwIXRA52GMt9Y3A3QWws_VRiA" -d "{
+    "customer":"Sreenadh TC",
+    "items":[
+        {"id":"5ae80f2f19185b5135b4b9f0","qty":10},
+        
+        {"id":"5ae80f2919185b5135b4b9ef","qty":5},
+        
+        {"id":"5ae80f0319185b5135b4b9ed","qty":10}
+    ]
+}" http://192.168.10.109:6363/api/v1/users/cart
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4N2Q3NmExNi05MThlLTRjMDctYWQ4Ny0wZWVlMGM1NGVkNzciLCJleHAiOjE1MjUyNDYxMjEsImZyZXNoIjpmYWxzZSwiaWF0IjoxNTI1MjQ1MjIxLCJpZGVudGl0eSI6IjVhZTgwNjYxMTkxODViNDMxMWIyNDUzYiIsInR5cGUiOiJhY2Nlc3MiLCJuYmYiOjE1MjUyNDUyMjF9.GTUUzQWJb9AlXkOVLqMwIXRA52GMt9Y3A3QWws_VRiA" -d "" http://192.168.10.109:6363/api/v1/orders
+
+curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudGl0eSI6IjVhZTk4MWQ5MTkxODViMzllYmU1YWQwZiIsImlhdCI6MTUyNTI1MzQzNywianRpIjoiMTY0MzI1YmItMWVkNy00MGRlLTllZWItMTg4NjQyNzE5OGFhIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTUyNTI1NDMzNywiZnJlc2giOmZhbHNlLCJuYmYiOjE1MjUyNTM0Mzd9.iPSxTYZ013Bi2vHHWWPovmqWafDMwLu3O0lsdjcF_yw" -d "" http://192.168.10.109:6363/api/v1/orders/5ae9831a19185b3d7585c12f
+
+curl -X POST -H "Content-Type: application/json" -d "{
+    "email":"sreenadh@datahut.co",
+    "password":"sreenadh"
+}" http://192.168.10.109:6363/auth/login
+
+curl -X POST -H "Content-Type: application/json" -d "{
+    "passwd_digest":"sreenadh",
+    "email":"sreenadh@gmail.com",
+    "phone":"8281143747"
+}" http://192.168.10.109:6363/auth/signup
