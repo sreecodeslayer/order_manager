@@ -15,6 +15,8 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0e
 
 curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudGl0eSI6IjVhZTk4MWQ5MTkxODViMzllYmU1YWQwZiIsImlhdCI6MTUyNTI1MzQzNywianRpIjoiMTY0MzI1YmItMWVkNy00MGRlLTllZWItMTg4NjQyNzE5OGFhIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTUyNTI1NDMzNywiZnJlc2giOmZhbHNlLCJuYmYiOjE1MjUyNTM0Mzd9.iPSxTYZ013Bi2vHHWWPovmqWafDMwLu3O0lsdjcF_yw" -d "" http://192.168.10.109:6363/api/v1/orders/5ae9831a19185b3d7585c12f
 
+curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTI1MjU3NTUwLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTUyNTI1NjY1MCwiaWRlbnRpdHkiOiI1YWU5ODFkOTE5MTg1YjM5ZWJlNWFkMGYiLCJuYmYiOjE1MjUyNTY2NTAsImp0aSI6ImNiNGNkMWJmLWUxNTItNDllZS05YjQ4LThiNzUyYTllZWY0ZSJ9.j7T7W_Gonld3RMd_Rp_IRO9xZsomvfKIxeJzzIJlwuk" -d "" http://192.168.10.109:6363/api/v1/crops
+
 curl -X POST -H "Content-Type: application/json" -d "{
     "email":"sreenadh@datahut.co",
     "password":"sreenadh"
