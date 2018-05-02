@@ -15,7 +15,7 @@ api = Api(blueprint)
 
 
 api.add_resource(UserResource, '/users/<uid>')
-api.add_resource(CartResource, '/users/<uid>/cart')
+api.add_resource(CartResource, '/users/cart')
 api.add_resource(UsersResource, '/users')
 api.add_resource(CropsResource, '/crops')
 api.add_resource(OrdersResource, '/orders')

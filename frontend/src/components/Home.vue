@@ -19,19 +19,48 @@
                 </v-layout>
                 <v-layout row wrap>
                   <v-flex xs12>
-                    <v-data-table
-                    :headers="headers"
-                    :items="orderItems"
-                    hide-actions
-                    class="elevation-1"
-                    pagination.sync="pagination"
-                    item-key="id"
-                    loading="true"
-                    search="search"
-                    >
-
-                  </v-data-table>
-                </v-flex>
+                    <div class="table__overflow">
+                      <table class="datatable table">
+                        <thead>
+                          <tr>
+                            <th class="column text-xs-center">Item</th>
+                            <th class="column text-xs-center">Quantity(Kg)</th>
+                            <th class="column text-xs-center">Price(Rs.)</th>
+                            <th class="column text-xs-center">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(item,index) in orderItems" :key="index">
+                            <td>
+                              <v-select :items="crops" item-text="name" v-model="item.selectedCrop" label="Select Crop" required></v-select>
+                            </td>
+                            <td class="text-xs-center">
+                              <v-text-field name="itemQty" label="Enter quantity" id="itemQty" type="number" v-model="item.qty" @keyup.enter="orderItems.push({qty: 0,selectedCrop: {price:1,id:''}})"></v-text-field>
+                            </td>
+                            <td v-if="item.selectedCrop" class="text-xs-center subheading red--text">
+                              <pre>{{ item.selectedCrop.price * item.qty }}</pre>
+                            </td>
+                            <td class="justify-center layout px-0">
+                              <v-btn color="error" flat icon @click.native="orderItems.splice(index,1)">
+                                <v-icon>cancel</v-icon>
+                              </v-btn>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="3" class="text-xs-right subheading">Grand Total ({{ orderItems.length }} Items)</td>
+                            <td class="text-xs-center subheading green--text darken-3"><pre>{{ cartTotal }}</pre></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="datatable table">
+                        <div class="datatable__actions">
+                          <v-btn color="success" flat icon @click.prevent="finalizeOrder">
+                            <v-icon>check</v-icon>
+                          </v-btn>
+                        </div>
+                      </div>
+                    </div>
+                  </v-flex>
                 </v-layout> 
               </v-card-text>
             </v-form>
@@ -48,7 +77,6 @@ export default {
     return {
       newOrderForm: true,
       newOrder: {},
-      itemsList: [{id: '', qty: 1}],
       crops: [],
       headers: [
         {
@@ -69,15 +97,61 @@ export default {
       ],
       orderItems: [
         {
-          id: '',
-          qty: ''
+          qty: 0,
+          selectedCrop: {
+            id: '',
+            price: 0
+          }
         }
       ]
     }
   },
   methods: {
     getAllCrops () {
-      this.$http.get('http://127.0.0.1:6363/api/v1/crops')
+      this.$http.get('http://127.0.0.1:6363/api/v1/crops').then(
+        (response) => {
+          this.crops = response.data
+          console.log(this.crops)
+        },
+        (err) => {
+          if (this.err.response.status === 401) {
+            this.$auth.logout()
+            this.$router.push('/login')
+          }
+        })
+    },
+    finalizeOrder () {
+      this.newOrder.items = []
+
+      for (var i = this.orderItems.length - 1; i >= 0; i--) {
+        console.log(this.orderItems[i].selectedCrop.id)
+        if (this.orderItems[i].selectedCrop.id && this.orderItems[i].qty > 0) {
+          this.newOrder.items.push({
+            qty: this.orderItems[i].qty,
+            id: this.orderItems[i].selectedCrop.id
+          })
+        }
+      }
+      console.log(this.newOrder.items)
+
+      if (this.newOrder.items) {
+        this.$http.patch('http://127.0.0.1:6363/api/v1/users/cart', this.newOrder).then(
+          (response) => {
+            console.log(response)
+          },
+          (err) => {
+            console.log(err.response)
+          })
+      }
+    }
+  },
+  computed: {
+    cartTotal () {
+      var total = 0
+      for (var i = this.orderItems.length - 1; i >= 0; i--) {
+        total += this.orderItems[i].selectedCrop.price * this.orderItems[i].qty
+      }
+      return total
     }
   },
   created () {

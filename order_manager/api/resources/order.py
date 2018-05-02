@@ -95,7 +95,7 @@ class CropsResource(Resource):
 class CartResource(Resource):
     decorators = [jwt_required]
 
-    def patch(self, uid):
+    def patch(self):
 
         if not request.is_json:
             return jsonify({'msg': 'Missing JSON in request'}), 400
@@ -103,42 +103,40 @@ class CartResource(Resource):
         schema = CartSchema()
         user_id = get_jwt_identity()
         cart = None
-        if user_id == uid:
-            user = Users.objects.get(id=user_id)
-            try:
-                cart = user.cart
-            except DoesNotExist:
-                cart = Carts(current_total=0.0, items=[])
-                cart.save()
-                user.update(cart=cart)
-                user.reload()
-
-            json_data = request.get_json()
-            cart.reload()
-
-            added_items = json_data.get('items')
-
-            current_cart_items = cart.items
-            current_total = 0
-            # Update card
-            for item in added_items:
-                item_id = item.get('id')
-                qty = item.get('qty', 1)
-                item = Crops.objects.get_or_404(id=item_id)
-                item_price = item.price * qty
-                current_total += item_price
-                for curr in current_cart_items:
-                    if item == curr.get('item'):
-                        cart.update(pull__items=curr)
-                        curr['qty'] = qty
-                        curr['total'] = item_price
-                        cart.update(add_to_set__items=curr)
-                else:
-                    cart.update(add_to_set__items={
-                            'item': item, 'total': item_price, 'qty': qty})
-                    cart.update(current_total=current_total)
+        user = Users.objects.get(id=user_id)
+        try:
+            cart = user.cart
+        except DoesNotExist:
+            cart = Carts(current_total=0.0, items=[])
+            cart.save()
+            user.update(cart=cart)
             user.reload()
 
-            cart,errors = schema.dump(user.cart)
-            return cart
-        return make_response(jsonify(msg='User not found'), 404)
+        json_data = request.get_json()
+        cart.reload()
+
+        added_items = json_data.get('items')
+
+        current_cart_items = cart.items
+        current_total = 0
+        # Update card
+        for item in added_items:
+            item_id = item.get('id')
+            qty = item.get('qty', 1)
+            item = Crops.objects.get_or_404(id=item_id)
+            item_price = item.price * qty
+            current_total += item_price
+            for curr in current_cart_items:
+                if item == curr.get('item'):
+                    cart.update(pull__items=curr)
+                    curr['qty'] = qty
+                    curr['total'] = item_price
+                    cart.update(add_to_set__items=curr)
+            else:
+                cart.update(add_to_set__items={
+                        'item': item, 'total': item_price, 'qty': qty})
+                cart.update(current_total=current_total)
+        user.reload()
+
+        cart,errors = schema.dump(user.cart)
+        return cart
