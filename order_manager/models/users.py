@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 class Carts(db.Document):
     '''Mongodb Model for Carts per user'''
+    customer = db.StringField(required=True)
     current_total = db.FloatField(default=0.0)
     items = db.ListField()
 

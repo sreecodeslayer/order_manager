@@ -39,6 +39,7 @@ class CartItemSchema(ma.Schema):
 
 class CartSchema(ma.Schema):
     id = ObjectId(dump_only=True)
+    customer = ma.String(required=True)
     items = ma.List(ma.Nested(CartItemSchema))
     current_total = ma.Float()
 

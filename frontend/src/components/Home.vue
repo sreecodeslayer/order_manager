@@ -134,14 +134,15 @@ export default {
       }
       console.log(this.newOrder.items)
 
-      if (this.newOrder.items) {
+      if (this.newOrder.items.length > 0) {
         this.$http.patch('http://127.0.0.1:6363/api/v1/users/cart', this.newOrder).then(
           (response) => {
             console.log(response)
           },
           (err) => {
             console.log(err.response)
-          })
+          }
+        )
       }
     }
   },
