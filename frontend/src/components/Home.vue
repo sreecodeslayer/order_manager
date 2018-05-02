@@ -108,7 +108,7 @@ export default {
   },
   methods: {
     getAllCrops () {
-      this.$http.get('http://127.0.0.1:6363/api/v1/crops').then(
+      this.$http.get('/api/v1/crops').then(
         (response) => {
           this.crops = response.data
           console.log(this.crops)
@@ -135,9 +135,9 @@ export default {
       console.log(this.newOrder.items)
 
       if (this.newOrder.items.length > 0) {
-        this.$http.patch('http://127.0.0.1:6363/api/v1/users/cart', this.newOrder).then(
+        this.$http.patch('/api/v1/users/cart', this.newOrder).then(
           (response) => {
-            if (response.status == 200) {
+            if (response.status === 200) {
               this.orderItems = [
                 {
                   qty: 0,
@@ -151,7 +151,7 @@ export default {
               this.newOrder = {}
               this.$refs.newOrderForm.reset()
 
-              this.$http.post('http://127.0.0.1:6363/api/v1/orders').then(
+              this.$http.post('/api/v1/orders').then(
                 (response) => {
 
                 },
