@@ -111,7 +111,6 @@ export default {
       this.$http.get('/api/v1/crops').then(
         (response) => {
           this.crops = response.data
-          console.log(this.crops)
         },
         (err) => {
           if (this.err.response.status === 401) {
@@ -124,7 +123,6 @@ export default {
       this.newOrder.items = []
 
       for (var i = this.orderItems.length - 1; i >= 0; i--) {
-        console.log(this.orderItems[i].selectedCrop.id)
         if (this.orderItems[i].selectedCrop.id && this.orderItems[i].qty > 0) {
           this.newOrder.items.push({
             qty: this.orderItems[i].qty,

@@ -136,7 +136,6 @@ export default {
           }
         },
         (err) => {
-          console.log(err.response)
           this.signupErr_msg = err.response.data.msg
           this.signupErr = true
         })

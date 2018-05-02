@@ -22,7 +22,6 @@ Vue.config.productionTip = false
 // JWT Auth
 
 let host = window.location.origin
-// let host = 'http://127.0.0.1:6363'
 
 Vue.use(VueAuthenticate, {
   tokenName: 'auth_token',
