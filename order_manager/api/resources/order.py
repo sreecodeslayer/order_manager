@@ -25,7 +25,8 @@ from order_manager.helpers.paginator import paginate
 
 from mongoengine.errors import (
     NotUniqueError,
-    DoesNotExist
+    DoesNotExist,
+    ValidationError
 )
 
 
@@ -55,9 +56,32 @@ class OrdersResource(Resource):
             )
 
         order = Orders(ordered_by=user, items=final_cart.items,
-                       total=final_cart.current_total)
+                       total=final_cart.current_total, customer=final_cart.customer)
         order.save()
         final_cart.update(current_total=0.0, items=[])
+        return schema.jsonify(order)
+
+
+class OrderResource(Resource):
+
+    decorators = [jwt_required]
+
+    def get(self, oid):
+        schema = OrderSchema()
+        user_id = get_jwt_identity()
+
+        user = Users.objects.get(id=user_id)
+
+        try:
+            order = Orders.objects.get(id=oid)
+        except DoesNotExist:
+            return make_response(
+                jsonify(msg='No order found in that ID'), 404
+            )
+        except ValidationError:
+            return make_response(
+                jsonify(msg='No order found in that ID'), 404
+            )
         return schema.jsonify(order)
 
 
@@ -69,7 +93,7 @@ class CropsResource(Resource):
         schema = CropSchema()
 
         crop = Crops.objects()
-        return schema.jsonify(crop ,many=True)
+        return schema.jsonify(crop, many=True)
 
     def post(self):
 
@@ -101,7 +125,7 @@ class CartResource(Resource):
             return jsonify({'msg': 'Missing JSON in request'}), 400
 
         schema = CartSchema()
-        cart_data,errors = schema.load(request.json)
+        cart_data, errors = schema.load(request.json)
         if errors:
             return errors, 422
         user_id = get_jwt_identity()
@@ -110,7 +134,8 @@ class CartResource(Resource):
         try:
             cart = user.cart
         except DoesNotExist:
-            cart = Carts(current_total=0.0, items=[], customer=cart_data.get('customer'))
+            cart = Carts(current_total=0.0, items=[],
+                         customer=cart_data.get('customer'))
             cart.save()
             user.update(cart=cart)
             user.reload()
@@ -125,7 +150,7 @@ class CartResource(Resource):
         # Update card
         for item in added_items:
             item_id = item.get('id')
-            qty = item.get('qty', 1)
+            qty = float(item.get('qty', 1))
             item = Crops.objects.get_or_404(id=item_id)
             item_price = item.price * qty
             current_total += item_price
@@ -137,9 +162,9 @@ class CartResource(Resource):
                     cart.update(add_to_set__items=curr)
             else:
                 cart.update(add_to_set__items={
-                        'item': item, 'total': item_price, 'qty': qty})
+                    'item': item, 'total': item_price, 'qty': qty})
                 cart.update(current_total=current_total)
         user.reload()
 
-        cart,errors = schema.dump(user.cart)
+        cart, errors = schema.dump(user.cart)
         return cart

@@ -137,7 +137,29 @@ export default {
       if (this.newOrder.items.length > 0) {
         this.$http.patch('http://127.0.0.1:6363/api/v1/users/cart', this.newOrder).then(
           (response) => {
-            console.log(response)
+            if (response.status == 200) {
+              this.orderItems = [
+                {
+                  qty: 0,
+                  selectedCrop: {
+                    id: '',
+                    price: 0
+                  }
+                }
+              ]
+
+              this.newOrder = {}
+              this.$refs.newOrderForm.reset()
+
+              this.$http.post('http://127.0.0.1:6363/api/v1/orders').then(
+                (response) => {
+
+                },
+                (err) => {
+                  console.log(err.response)
+                }
+              )
+            }
           },
           (err) => {
             console.log(err.response)

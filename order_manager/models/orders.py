@@ -17,6 +17,7 @@ class Crops(db.Document):
 
 class Orders(db.Document):
     '''Mongodb Model for Orders'''
+    customer = db.StringField(required=True)
     ordered_by = db.ReferenceField(Users)
     items = db.ListField()
     total = db.FloatField(default=0)

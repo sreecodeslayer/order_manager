@@ -46,6 +46,7 @@ class CartSchema(ma.Schema):
 # Only to Serialize order
 class OrderSchema(ma.Schema):
     id = ObjectId(dump_only=True)
+    customer = ma.String()
     ordered_by = ma.Nested(UserSchema, dump_only=True)
     items = ma.List(ma.Nested(CartItemSchema), dump_only=True)
     status = ma.String(dump_only=True)

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from order_manager import auth, api
 from order_manager.extensions import db, jwt
@@ -8,6 +8,10 @@ def create_app(config=None, testing=False, cli=False):
     '''Application factory, used to create application
     '''
     app = Flask('order_manager')
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
     configure_app(app, testing)
     configure_extensions(app, cli)

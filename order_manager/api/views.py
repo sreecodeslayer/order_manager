@@ -5,6 +5,7 @@ from order_manager.api.resources import (
     UserResource,
     UsersResource,
     OrdersResource,
+    OrderResource,
     CropsResource,
     CartResource
 )
@@ -19,3 +20,4 @@ api.add_resource(CartResource, '/users/cart')
 api.add_resource(UsersResource, '/users')
 api.add_resource(CropsResource, '/crops')
 api.add_resource(OrdersResource, '/orders')
+api.add_resource(OrderResource, '/orders/<oid>')
