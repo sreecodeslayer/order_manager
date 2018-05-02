@@ -133,6 +133,7 @@ class CartResource(Resource):
         user = Users.objects.get(id=user_id)
         try:
             cart = user.cart
+            cart.update(customer = cart_data.get('customer'))
         except DoesNotExist:
             cart = Carts(current_total=0.0, items=[],
                          customer=cart_data.get('customer'))
