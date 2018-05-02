@@ -1,0 +1,54 @@
+[
+    {
+        "name":"Tomoto",
+        "price":30
+    },
+    {
+        "name":"Brinjal",
+        "price":20
+    },
+    {
+        "name":"Ladies Finger",
+        "price":30
+    },
+    {
+        "name":"Cabbage",
+        "price":35
+    },
+    {
+        "name":"Rice",
+        "price":38
+    },
+    {
+        "name":"Wheat",
+        "price":40
+    },
+    {
+        "name":"Green Chilly",
+        "price":20
+    },
+    {
+        "name":"Potato",
+        "price":35
+    },
+    {
+        "name":"Onion",
+        "price":25
+    },
+    {
+        "name":"Apple",
+        "price":80
+    },
+    {
+        "name":"Orange",
+        "price":90
+    },
+    {
+        "name":"Grapes",
+        "price":110
+    },
+    {
+        "name":"Coconut",
+        "price":58
+    }
+]
