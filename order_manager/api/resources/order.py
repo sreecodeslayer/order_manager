@@ -126,7 +126,6 @@ class CartResource(Resource):
 
         schema = CartSchema()
         cart_data, errors = schema.load(request.json)
-        print(cart_data)
         if errors:
             return errors, 422
         user_id = get_jwt_identity()
