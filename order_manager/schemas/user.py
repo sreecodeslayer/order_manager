@@ -16,7 +16,7 @@ class ObjectId(fields.Field):
 
 class UserSchema(ma.Schema):
     _id = ObjectId(dump_only=True)
-    username = ma.String(required=True)
+    username = ma.String()
     email = ma.String(required=True,
                       validate=validate.Email(
                           error='Not a valid email address'))

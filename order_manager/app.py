@@ -2,7 +2,7 @@ from flask import Flask, render_template
 
 from order_manager import auth, api
 from order_manager.extensions import db, jwt
-
+from order_manager.helpers.populate import populate_db
 
 def create_app(config=None, testing=False, cli=False):
     '''Application factory, used to create application
@@ -16,6 +16,7 @@ def create_app(config=None, testing=False, cli=False):
     configure_app(app, testing)
     configure_extensions(app, cli)
     register_blueprints(app)
+    populate_db()
 
     return app
 

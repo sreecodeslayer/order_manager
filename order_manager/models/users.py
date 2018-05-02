@@ -9,7 +9,7 @@ class Carts(db.Document):
 
 class Users(db.Document):
     '''Mongodb Model for Users'''
-    username = db.StringField(required=True, unique=True)
+    username = db.StringField()
     email = db.EmailField(unique=True)
     passwd_digest = db.StringField()
     phone = db.StringField()
